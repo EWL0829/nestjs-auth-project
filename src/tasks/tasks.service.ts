@@ -4,6 +4,7 @@ import { TaskRepository } from './task.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './task.entity';
 import { TaskStatus } from './task-status.enum';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 // the component within the NestJS ecosystem can inject a provider that is  decorated with the @Injectable
 // the @Injectable makes a class becoming a dependency that can be injected into another Module
@@ -14,6 +15,9 @@ export class TasksService {
     private taskRepository: TaskRepository,
   ) {}
   // private tasks: Task[] = [];
+  async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto);
+  }
 
   // getAllTasks(): Task[] {
   //   return this.tasks;
@@ -62,9 +66,10 @@ export class TasksService {
   //   this.tasks = this.tasks.filter((task: Task) => task.id !== found.id);
   // }
   //
-  // updateTaskStatus(status: TaskStatus, id: string): Task {
-  //   const task = this.getTaskById(id);
-  //   task.status = status;
-  //   return task;
-  // }
+  async updateTaskStatus(status: TaskStatus, id: number): Promise<Task> {
+    const task = await this.getTaskById(id);
+    task.status = status;
+    await task.save();
+    return task;
+  }
 }
