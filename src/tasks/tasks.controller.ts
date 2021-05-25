@@ -44,7 +44,7 @@ export class TasksController {
   ): Promise<Task> {
     return this.taskService.createTask(createTaskDto, user);
   }
-  //
+
   @Get('/:id') // below the line, ParseIntPipe is used for validating the passed id is a number or not
   async getTaskById(
     @Param('id', ParseIntPipe) id: number,
@@ -52,17 +52,21 @@ export class TasksController {
   ): Promise<Task> {
     return await this.taskService.getTaskById(id, user);
   }
-  //
+
   @Delete('/:id')
-  deleteTaskById(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.taskService.deleteTask(id);
+  deleteTaskById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+): Promise<void> {
+    return this.taskService.deleteTask(id, user);
   }
-  //
+
   @Patch('/:id/status')
   updateTaskStatus(
     @Body('status', TaskStatusValidationPipe) status: TaskStatus,
     @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
   ): Promise<Task> {
-    return this.taskService.updateTaskStatus(status, id);
+    return this.taskService.updateTaskStatus(status, id, user);
   }
 }
